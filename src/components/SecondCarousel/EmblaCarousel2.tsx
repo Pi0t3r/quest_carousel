@@ -1,9 +1,5 @@
-import React, {useCallback, useEffect, useRef} from 'react';
-import {
-  EmblaCarouselType,
-  // EmblaEventType,
-  EmblaOptionsType,
-} from 'embla-carousel';
+import React from 'react';
+import {EmblaOptionsType} from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 
 import {
@@ -13,8 +9,6 @@ import {
 } from './EmblaCarouselArrowButtons2';
 import {data} from '../../data';
 
-const TWEEN_FACTOR_BASE = 0.84;
-
 type PropType = {
   slides: number[];
   options?: EmblaOptionsType;
@@ -23,7 +17,6 @@ type PropType = {
 const EmblaCarousel: React.FC<PropType> = (props) => {
   const {slides, options} = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
-  const tweenFactor = useRef(0);
 
   const {
     prevBtnDisabled,
@@ -31,50 +24,6 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
-
-  const setTweenFactor = useCallback((emblaApi: EmblaCarouselType) => {
-    tweenFactor.current = TWEEN_FACTOR_BASE * emblaApi.scrollSnapList().length;
-  }, []);
-
-  const handleOpacity = useCallback((emblaApi: EmblaCarouselType) => {
-    const slidesInView = emblaApi.slidesInView().slice(0, 5);
-
-    slidesInView.forEach((slideIndex, index) => {
-      if (slideIndex === 0 || slideIndex === 1) {
-        emblaApi.slideNodes()[slideIndex].style.opacity = '1';
-        if (slideIndex > 1) {
-          // emblaApi.slideNodes()[slideIndex - 2].style.opacity = '0.5';
-          console.log(`current index: ${slideIndex}`);
-        }
-      }
-      if (index > 2) {
-        emblaApi.slideNodes()[index].style.background = 'red';
-      }
-      console.log(`obecny index: ${index}`);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    setTweenFactor(emblaApi);
-    emblaApi.on('reInit', setTweenFactor);
-  }, [emblaApi, setTweenFactor]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const handleScroll = () => {
-      handleOpacity(emblaApi);
-    };
-
-    handleOpacity(emblaApi);
-    emblaApi.on('scroll', handleScroll);
-
-    return () => {
-      emblaApi.off('scroll', handleScroll);
-    };
-  }, [emblaApi, handleOpacity]);
 
   return (
     <div className='embla2'>
