@@ -8,7 +8,7 @@
   padding: 15px;
 }
 .container__info h2 {
-  font-size: 20px;
+  font-size: 40px;
 }
 .container__info p {
   display: flex;
@@ -16,7 +16,7 @@
   flex-wrap: wrap;
   line-height: 25px;
   margin-top: 10px;
-  font-size: 13px;
+  font-size: 15px;
 }
 .container__info p svg {
   color: #ffff00;
@@ -41,7 +41,7 @@
   height: 100%;
 }
 .embla__slide {
-  flex: 0 0 150px;
+  flex: 0 0 20%;
   min-width: 0;
   border-radius: 0.8rem;
   overflow: hidden;
