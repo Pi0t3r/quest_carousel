@@ -10,7 +10,7 @@ import {
   PrevButton,
   usePrevNextButtons,
 } from './EmblaCarouselArrowButtons';
-import {DotButton, useDotButton} from '../EmblaCarouselDotButton';
+import {dataCarousel} from '../data';
 
 const TWEEN_FACTOR_BASE = 0.84;
 
@@ -22,13 +22,10 @@ type PropType = {
   options?: EmblaOptionsType;
 };
 
-const EmblaCarousel: React.FC<PropType> = (props) => {
+export const EmblaCarousel: React.FC<PropType> = (props) => {
   const {slides, options} = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
   const tweenFactor = useRef(0);
-
-  const {selectedIndex, scrollSnaps, onDotButtonClick} = useDotButton(emblaApi);
-
   const {
     prevBtnDisabled,
     nextBtnDisabled,
@@ -50,7 +47,6 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
         let diffToTarget = scrollSnap - scrollProgress;
         const slidesInSnap = engine.slideRegistry[snapIndex];
-
         slidesInSnap.forEach((slideIndex) => {
           if (isScrollEvent && !slidesInView.includes(slideIndex)) return;
 
@@ -60,20 +56,27 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
 
               if (slideIndex === loopItem.index && target !== 0) {
                 const sign = Math.sign(target);
+                if (slideIndex === emblaApi.selectedScrollSnap()) {
+                  emblaApi.scrollTo(emblaApi.previousScrollSnap());
+                }
 
                 if (sign === -1) {
-                  diffToTarget = scrollSnap - (1 + scrollProgress);
+                  diffToTarget = scrollSnap - scrollProgress;
                 }
                 if (sign === 1) {
-                  diffToTarget = scrollSnap + (1 - scrollProgress);
+                  diffToTarget = scrollSnap + scrollProgress;
                 }
               }
             });
           }
 
           const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current);
-          const opacity = numberWithinRange(tweenValue, 0, 1).toString();
+          const opacity = numberWithinRange(tweenValue, 0.5, 1).toString();
           emblaApi.slideNodes()[slideIndex].style.opacity = opacity;
+
+          if (slideIndex === emblaApi.selectedScrollSnap()) {
+            emblaApi.slideNodes()[slideIndex].style.opacity = '1';
+          }
         });
       });
     },
@@ -97,7 +100,18 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
         <div className='embla__container'>
           {slides.map((index) => (
             <div className='embla__slide' key={index}>
-              <span>{index + 1}</span>
+              <div className='embla__slide--containerImage'>
+                <img
+                  className='embla__slide--image'
+                  src={dataCarousel[index].image}
+                  alt={dataCarousel[index].title}
+                />
+              </div>
+              <div className='embla__slide--textContainer'>
+                <p className='embla__slide--text'>
+                  {dataCarousel[index].title}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -108,21 +122,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
           <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
           <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
         </div>
-
-        <div className='embla__dots'>
-          {scrollSnaps.map((_, index) => (
-            <DotButton
-              key={index}
-              onClick={() => onDotButtonClick(index)}
-              className={'embla__dot'.concat(
-                index === selectedIndex ? ' embla__dot--selected' : ''
-              )}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );
 };
-
-export default EmblaCarousel;

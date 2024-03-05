@@ -3,7 +3,7 @@ import Painting from '../../public/painting.webp';
 import Tires from '../../public/tires.webp';
 import Regeneration from '../../public/regeneracja-t-1.jpg';
 import Service from '../../public/service.jpg';
-export const data = [
+export const dataCarousel = [
   {
     image: Painting,
     title: 'blacharstwo i lakiernictwo',

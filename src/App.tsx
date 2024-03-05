@@ -1,30 +1,32 @@
-import {useState} from 'react';
-import {EmblaCarouselComponent} from './components/FirstCarousel/EmblaCarouselComponent';
+import {EmblaCarousel} from './components/EmblaCarousel';
+import {EmblaOptionsType} from 'embla-carousel';
+import {dataCarousel} from './data';
+import StarIcon from '@mui/icons-material/Star';
+import '../src/components/css/embla.css';
+const SLIDE_COUNT = dataCarousel.length;
+const SLIDES = Array.from(Array(SLIDE_COUNT).keys());
+const OPTIONS: EmblaOptionsType = {loop: false};
 
-import {EmblaCarouselComponent2} from './components/SecondCarousel/EmblaCarouselComponent2';
 function App() {
-  const [chosenCarousel, setChosenCarousel] = useState('');
   return (
-    <div
-      style={{
-        textAlign: 'center',
-      }}
-    >
-      <h2>Choose carousel</h2>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '25%',
-          margin: '0 auto 20px',
-        }}
-      >
-        <button onClick={() => setChosenCarousel('First')}>1</button>
-        <button onClick={() => setChosenCarousel('Second')}>2</button>
+    <div className='container'>
+      <div className='container__info'>
+        <h2>Serwis i naprawa Twojego auta</h2>
+        <p>
+          Mamy w swojej bazie
+          <b
+            style={{
+              marginLeft: 2,
+            }}
+          >
+            84 114 warsztatów
+          </b>
+          , ocenianych średnio na
+          <StarIcon />
+          <b>4.0</b>
+        </p>
       </div>
-      {chosenCarousel === 'First' && <EmblaCarouselComponent />}
-      {chosenCarousel === 'Second' && <EmblaCarouselComponent2 />}
+      <EmblaCarousel slides={SLIDES} options={OPTIONS} />
     </div>
   );
 }
